@@ -25,13 +25,7 @@ class NeilPool:
 
     @staticmethod
     def _extract_dbCons(dbCons: NeilConfig) -> dict[str, str | int | bool]:
-        return {
-            "user": dbCons.username,
-            "password": dbCons.password,
-            "host": dbCons.hostname,
-            "port": dbCons.port,
-            "database": dbCons.database,
-        }
+        return dbCons.as_dict()
 
     def _create_pool(self) -> mariadb.ConnectionPool | None:
         try:
@@ -64,14 +58,12 @@ class NeilPool:
         line_comment: str = "--",
         multiline_comment: tuple[str, str] = ("/*", "*/"),
     ) -> str:
-        """Work in progress"""
         # Removing inline comments
         sql_script = remove_after_characters(chars=sql_script, to_remove=line_comment)
         # Removing multiline comments
         sql_script = remove_between_characters(
             string=sql_script, bounds=multiline_comment
         )
-        # nothing yet
         return sql_script
 
     def execute_script(
@@ -128,7 +120,8 @@ class NeilPool:
                     if warnings := cur.warnings > 0:
                         result.warningCount = warnings
                         result.warnings = conn.show_warnings()
-                        self.log.warning(f"WARNING(s): {result.warnings}")
+                        for warn in result.warnings:
+                            self.log.warning(warn)
                     result.metadata = cur.metadata
                 conn.close()
         except mariadb.ProgrammingError as e:

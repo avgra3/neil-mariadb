@@ -1,16 +1,11 @@
 from dataclasses import dataclass, field
 
 
-@dataclass(slots=True)
+@dataclass(slots=True, repr=True)
 class NeilError:
     ErrorMessage: str
     SQLState: str | None = None
     ErrorNum: int | None = None
-
-    def __repr__(self) -> str:
-        sql_state = self.SQLState if self.SQLState is not None else "n/a"
-        sql_err_num = self.ErrorNum if self.ErrorNum is not None else "n/a"
-        return f"SQL State: {sql_state} \tSQL Error Number: {sql_err_num}\n{self.ErrorMessage}"
 
 
 @dataclass(slots=True)
