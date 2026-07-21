@@ -1,6 +1,6 @@
 from neil import NeilConfig
 
-BASIC_CONFIG = NeilConfig(username="user", password="pw")
+BASIC_CONFIG = NeilConfig(user="user", password="pw")
 
 SAMPLE_SQL_ONE = "SELECT id, name FROM person WHERE active = 1;"
 SAMPLE_SQL_TWO = "SELECT id, name FROM person WHERE active = 1 GROUP BY location;"

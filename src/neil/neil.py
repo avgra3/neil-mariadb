@@ -1,20 +1,38 @@
-from neil import NeilResult, NeilConfig, NeilError
+from neil.data import (
+    NeilResult,
+    NeilConfig,
+    NeilError,
+    NeilCursorConfig,
+    NeilResultMetaData,
+    as_dict,
+)
 from neil.defaults import LOGGER
 from .utils import remove_after_characters, remove_between_characters
 import mariadb
 from datetime import datetime
 import logging
+from collections.abc import Callable
+from typing import Any
 
 
 class NeilPool:
     def __init__(
-        self, conns: NeilConfig, logger: logging.Logger = LOGGER, pool_size: int = 1
+        self,
+        conns: NeilConfig,
+        logger: logging.Logger = LOGGER,
+        pool_size: int = 3,
+        cursor_conf: NeilCursorConfig | None = None,
     ):
         self.pool_size = pool_size
         self.log = logger
         self.pool_number = 1
         self.dbCons = self._extract_dbCons(dbCons=conns)
         self.pool = self._create_pool()
+        self.cursor_conf = (
+            cursor_conf
+            if cursor_conf is not None
+            else NeilCursorConfig(binary=conns.binary)
+        )
 
     def close_connection(self) -> None:
         if self.pool is None:
@@ -24,8 +42,10 @@ class NeilPool:
         self.log.info("Pool has been closed.")
 
     @staticmethod
-    def _extract_dbCons(dbCons: NeilConfig) -> dict[str, str | int | bool]:
-        return dbCons.as_dict()
+    def _extract_dbCons(
+        dbCons: NeilConfig,
+    ) -> dict[str, str | int | bool | None | dict[str, Callable[..., Any]]]:
+        return as_dict(obj=dbCons)
 
     def _create_pool(self) -> mariadb.ConnectionPool | None:
         try:
@@ -69,11 +89,12 @@ class NeilPool:
     def execute_script(
         self,
         sql_script: str,
-        params: list[list] | None = None,
+        params: list[list[Any]] | None = None,
         delim: str = ";",
         line_comment: str = "--",
         multiline_comment: tuple[str, str] = ("/*", "*/"),
     ) -> list[NeilResult]:
+        results = []
         try:
             sql_script_no_comments: str = self._remove_comments(
                 sql_script=sql_script,
@@ -83,7 +104,6 @@ class NeilPool:
             sql_queries: list[str] = self._split_sql(
                 sql_script=sql_script_no_comments, delim=delim
             )
-            results = []
             if len(results) > 0:
                 self.log.critical(results)
             for query in sql_queries:
@@ -93,7 +113,7 @@ class NeilPool:
             self.log.critical(f"Fatal error found! {e}")
         return results
 
-    def execute_sql(self, sql: str, params: list | None = None) -> NeilResult:
+    def execute_sql(self, sql: str, params: list[Any] | None = None) -> NeilResult:
         """
         This assumes that the sql query has been cleaned
         and we can get a connection from the connection pool
@@ -104,7 +124,7 @@ class NeilPool:
             return result
         try:
             with self.pool.get_connection() as conn:
-                with conn.cursor() as cur:
+                with conn.cursor(**as_dict(self.cursor_conf)) as cur:
                     _params = params if params is not None and "?" in sql else ()
                     self.log.info(f"Executing sql:\n{sql.strip()}")
                     if _params is not None and len(_params) > 0:
@@ -117,12 +137,15 @@ class NeilPool:
                     else:
                         result.updatedRows = cur.rowcount
                         self.log.info(f"Updated rows: {result.updatedRows:,}")
-                    if warnings := cur.warnings > 0:
-                        result.warningCount = warnings
+                    if cur.warnings > 0:
+                        result.warningCount = cur.warnings
                         result.warnings = conn.show_warnings()
                         for warn in result.warnings:
                             self.log.warning(warn)
-                    result.metadata = cur.metadata
+                    if cur.metadata:
+                        result.metadata = NeilResultMetaData(**cur.metadata)
+                    else:
+                        result.metadata = None
                 conn.close()
         except mariadb.ProgrammingError as e:
             self.log.error(f"Mariadb programming error: {e}")

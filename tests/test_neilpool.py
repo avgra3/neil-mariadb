@@ -1,4 +1,4 @@
-from neil import NeilPool
+from neil import NeilPool, as_dict
 from .constants import (
     BASIC_CONFIG,
     SAMPLE_SQL_ONE,
@@ -12,7 +12,7 @@ from .constants import (
 
 
 def test_extract_db_config_correct():
-    assert BASIC_CONFIG.as_dict() == NeilPool._extract_dbCons(dbCons=BASIC_CONFIG)
+    assert as_dict(obj=BASIC_CONFIG) == NeilPool._extract_dbCons(dbCons=BASIC_CONFIG)
 
 
 def test_sql_split_works_as_expected():

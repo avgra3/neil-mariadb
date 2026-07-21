@@ -2,11 +2,15 @@
 ![neil-the-seal][neil the seal image]
 A simple tool to handle MariaDB queries and reduce friction when interacting with query results.
 
-## NOTE
+## NOTES
 
-This project is in its early stages and likely has bugs or issues.
+1. This project is in its early stages and likely has bugs or issues.
+2. This relies on the Python MariaDB connector version less than 2.0, thus does not have any asynchronous features.
 
 ## Features
+### SQL Cleaning
+Before running any SQL, all commented lines are removed in order to prevent accidental running of invalid SQL.
+
 ### Errors
 Errors are handled with a `NeilError` object which contains essentially the MariaDB errors which normally come as a tuple, as a usable object broken into the error message, SQL state, and error number which corresponds to what the MariaDB database would return to the user.
 

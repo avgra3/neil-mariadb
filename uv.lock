@@ -39,7 +39,7 @@ wheels = [
 
 [[package]]
 name = "neil"
-version = "0.1.0"
+version = "0.2.0"
 source = { editable = "." }
 dependencies = [
     { name = "mariadb" },
@@ -53,7 +53,7 @@ dev = [
 ]
 
 [package.metadata]
-requires-dist = [{ name = "mariadb", specifier = ">=1.1.14" }]
+requires-dist = [{ name = "mariadb", specifier = ">=1.1.14,<2.0.0" }]
 
 [package.metadata.requires-dev]
 dev = [
