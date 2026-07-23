@@ -137,7 +137,7 @@ class NeilPool:
                         self.log.info(f"Updated rows: {result.updatedRows:,}")
                     if cur.warnings > 0:
                         result.warningCount = cur.warnings
-                        result.warnings = conn.show_warnings()
+                        result.warnings = [NeilError(*w) for w in conn.show_warnings()]
                         for warn in result.warnings:
                             self.log.warning(warn)
                     if cur.metadata:
