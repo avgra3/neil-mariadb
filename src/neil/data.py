@@ -7,7 +7,6 @@ from typing import Any
 class NeilResultMetaData:
     catalog: tuple[str, ...]
     schema: tuple[str, ...]
-    org_field: tuple[str, ...]
     table: tuple[str, ...]
     charset: tuple[int, ...]
     length: tuple[int, ...]
@@ -17,22 +16,6 @@ class NeilResultMetaData:
     ext_type_or_format: tuple[int, ...]
     field: tuple[str, ...] = field_(default_factory=tuple)
     type: tuple[int, ...] = field_(default_factory=tuple)
-
-    # @property
-    # def type(self) -> tuple[int, ...]:
-    #     return self.type_
-    #
-    # @type.setter
-    # def type(self, value: tuple[int, ...]):
-    #     self.type_ = value
-    #
-    # @property
-    # def field(self) -> tuple[str, ...]:
-    #     return self.field_
-    #
-    # @field.setter
-    # def field(self, value: tuple[str, ...]):
-    #     self.field_ = value
 
 
 @dataclass(slots=True)
