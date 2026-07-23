@@ -68,7 +68,6 @@ class NeilConfig:
     port: int = 3306
     # Connection behaviors
     autocommit: bool = False
-    read_only: bool = False
     compress: bool = False
     local_infile: bool = False
     init_command: str | None = None

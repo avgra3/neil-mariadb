@@ -11,7 +11,6 @@ def test_NeilConfig_dictionary():
         "database": BASIC_CONFIG.database,
         "port": BASIC_CONFIG.port,
         "autocommit": BASIC_CONFIG.autocommit,
-        "read_only": BASIC_CONFIG.read_only,
         "compress": BASIC_CONFIG.compress,
         "local_infile": BASIC_CONFIG.local_infile,
         "init_command": BASIC_CONFIG.init_command,
