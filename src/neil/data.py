@@ -5,15 +5,16 @@ from typing import Any
 
 @dataclass(slots=True)
 class NeilResultMetaData:
-    catalog: tuple[str, ...]
-    schema: tuple[str, ...]
-    table: tuple[str, ...]
-    charset: tuple[int, ...]
-    length: tuple[int, ...]
-    max_length: tuple[int, ...]
-    decimals: tuple[int, ...]
-    flags: tuple[int, ...]
-    ext_type_or_format: tuple[int, ...]
+    catalog: tuple[str, ...] | None = None
+    schema: tuple[str, ...] | None = None
+    table: tuple[str, ...] | None = None
+    charset: tuple[int, ...] | None = None
+    length: tuple[int, ...] | None = None
+    max_length: tuple[int, ...] | None = None
+    decimals: tuple[int, ...] | None = None
+    flags: tuple[int, ...] | None = None
+    ext_type_or_format: tuple[int, ...] | None = None
+    org_field: tuple[str, ...] | None = None
     field: tuple[str, ...] = field_(default_factory=tuple)
     type: tuple[int, ...] = field_(default_factory=tuple)
 
