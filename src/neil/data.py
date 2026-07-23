@@ -1,4 +1,4 @@
-from dataclasses import dataclass, field, asdict
+from dataclasses import dataclass, field as field_, asdict
 from collections.abc import Callable
 from typing import Any
 
@@ -15,24 +15,24 @@ class NeilResultMetaData:
     decimals: tuple[int, ...]
     flags: tuple[int, ...]
     ext_type_or_format: tuple[int, ...]
-    field_: tuple[str, ...] = field(default_factory=tuple)
-    type_: tuple[int, ...] = field(default_factory=tuple)
+    field: tuple[str, ...] = field_(default_factory=tuple)
+    type: tuple[int, ...] = field_(default_factory=tuple)
 
-    @property
-    def type(self) -> tuple[int, ...]:
-        return self.type_
-
-    @type.setter
-    def type(self, value: tuple[int, ...]):
-        self.type_ = value
-
-    @property
-    def field(self) -> tuple[str, ...]:
-        return self.field_
-
-    @field.setter
-    def field(self, value: tuple[str, ...]):
-        self.field_ = value
+    # @property
+    # def type(self) -> tuple[int, ...]:
+    #     return self.type_
+    #
+    # @type.setter
+    # def type(self, value: tuple[int, ...]):
+    #     self.type_ = value
+    #
+    # @property
+    # def field(self) -> tuple[str, ...]:
+    #     return self.field_
+    #
+    # @field.setter
+    # def field(self, value: tuple[str, ...]):
+    #     self.field_ = value
 
 
 @dataclass(slots=True)
@@ -66,8 +66,8 @@ class NeilResult:
     returnedData: list[tuple[str | int]] | None = None
     metadata: NeilResultMetaData | None = None
     warningCount: int = 0
-    warnings: list[NeilError] = field(default_factory=list)
-    errors: list[NeilError] = field(default_factory=list)
+    warnings: list[NeilError] = field_(default_factory=list)
+    errors: list[NeilError] = field_(default_factory=list)
 
     def __str__(self) -> str:
         out = f"{self.sqlStatement}\n"
@@ -99,7 +99,7 @@ class NeilConfig:
     local_infile: bool = False
     init_command: str | None = None
     # Type Conversion Parameters
-    converter: dict[str, Callable[..., Any]] | None = field(default_factory=dict)
+    converter: dict[str, Callable[..., Any]] | None = field_(default_factory=dict)
 
 
 def as_dict(obj) -> dict:
