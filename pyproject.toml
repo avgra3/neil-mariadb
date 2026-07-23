@@ -1,6 +1,6 @@
 [project]
 name = "neil"
-version = "0.2.1"
+version = "0.2.2"
 description = "Execute SQL scripts through MariaDB with captured output."
 readme = "README.md"
 authors = [

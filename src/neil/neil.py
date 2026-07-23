@@ -29,9 +29,7 @@ class NeilPool:
         self.dbCons = self._extract_dbCons(dbCons=conns)
         self.pool = self._create_pool()
         self.cursor_conf = (
-            cursor_conf
-            if cursor_conf is not None
-            else NeilCursorConfig(binary=conns.binary)
+            cursor_conf if cursor_conf is not None else NeilCursorConfig()
         )
 
     def close_connection(self) -> None:

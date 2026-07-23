@@ -37,7 +37,6 @@ class NeilResultMetaData:
 
 @dataclass(slots=True)
 class NeilCursorConfig:
-    binary: bool
     buffered: bool = True
 
 
@@ -71,13 +70,6 @@ class NeilConfig:
     compress: bool = False
     local_infile: bool = False
     init_command: str | None = None
-    # Protocol and Performance Params
-    binary: bool = False
-    max_allowed_packet: int = 16777216  # 16MB
-    cache_prep_stmts: bool = False
-    prep_stmt_cache_size: int = 100
-    pipeline: bool = True
-    client_flag: int = 0
     # Type Conversion Parameters
     converter: dict[str, Callable[..., Any]] | None = field(default_factory=dict)
 
