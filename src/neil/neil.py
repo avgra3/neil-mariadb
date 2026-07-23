@@ -87,7 +87,7 @@ class NeilPool:
     def execute_script(
         self,
         sql_script: str,
-        params: list[list[Any]] | None = None,
+        params: list[Any] | None = None,
         delim: str = ";",
         line_comment: str = "--",
         multiline_comment: tuple[str, str] = ("/*", "*/"),
