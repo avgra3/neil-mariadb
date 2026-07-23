@@ -15,6 +15,7 @@ class NeilResultMetaData:
     flags: tuple[int, ...] | None = None
     ext_type_or_format: tuple[int, ...] | None = None
     org_field: tuple[str, ...] | None = None
+    org_table: tuple[str, ...] | None = None
     field: tuple[str, ...] = field_(default_factory=tuple)
     type: tuple[int, ...] = field_(default_factory=tuple)
 
@@ -54,7 +55,7 @@ class NeilResult:
     errors: list[NeilError] = field_(default_factory=list)
 
     def __str__(self) -> str:
-        out = f"{self.sqlStatement}\n"
+        out = f"SQL Ran: {self.sqlStatement.strip()}\n"
         out += f"updated rows: {self.updatedRows}\n"
         if self.updatedRows:
             pass
