@@ -8,6 +8,7 @@ from .constants import (
     SAMPLE_SQL_WITH_MULTILINE_COMMENTS,
     SAMPLE_SQL_WITHOUT_LINE_COMMENTS,
     SAMPLE_SQL_WITHOUT_MULTILINE_COMMENTS,
+    SAMPLE_NO_CHANGES_TO_SQL,
 )
 
 
@@ -23,7 +24,9 @@ def test_sql_split_works_as_expected():
 
 def test_sql_remove_line_comments_mid_query():
     assert (
-        NeilPool._remove_comments(sql_script=SAMPLE_SQL_WITH_LINE_COMMENTS)
+        NeilPool._remove_comments(
+            sql_script=SAMPLE_SQL_WITH_LINE_COMMENTS, line_comment="-- "
+        )
         == SAMPLE_SQL_WITHOUT_LINE_COMMENTS
     )
 
@@ -32,4 +35,13 @@ def test_sql_remove_multiline_comments_mid_query():
     assert (
         NeilPool._remove_comments(sql_script=SAMPLE_SQL_WITH_MULTILINE_COMMENTS)
         == SAMPLE_SQL_WITHOUT_MULTILINE_COMMENTS
+    )
+
+
+def test_sql_no_changes_with_double_dash_in_query():
+    assert (
+        NeilPool._remove_comments(
+            sql_script=SAMPLE_NO_CHANGES_TO_SQL, line_comment="-- "
+        )
+        == SAMPLE_NO_CHANGES_TO_SQL
     )

@@ -73,7 +73,7 @@ class NeilPool:
     @staticmethod
     def _remove_comments(
         sql_script: str,
-        line_comment: str = "--",
+        line_comment: str = "-- ",
         multiline_comment: tuple[str, str] = ("/*", "*/"),
     ) -> str:
         # Removing inline comments
@@ -89,7 +89,7 @@ class NeilPool:
         sql_script: str,
         params: list[Any] | None = None,
         delim: str = ";",
-        line_comment: str = "--",
+        line_comment: str = "-- ",
         multiline_comment: tuple[str, str] = ("/*", "*/"),
     ) -> list[NeilResult]:
         results = []
