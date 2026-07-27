@@ -56,9 +56,12 @@ class NeilResult:
 
     def __str__(self) -> str:
         out = f"SQL Ran: {self.sqlStatement.strip()}\n"
-        out += f"updated rows: {self.updatedRows}\n"
-        if self.updatedRows:
-            pass
+        out += f"updated/returned rows: {self.updatedRows}\n"
+        if self.metadata:
+            out += f"|{' | '.join(self.metadata.field)}|\n"
+        if self.returnedData and len(self.returnedData) > 0:
+            for data in self.returnedData:
+                out += f"|{' | '.join([str(d) for d in data])}|\n"
         if self.metadata:
             out += str(self.metadata) + "\n"
         if self.warningCount > 0:
