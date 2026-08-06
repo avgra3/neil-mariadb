@@ -45,3 +45,10 @@ def test_sql_no_changes_with_double_dash_in_query():
         )
         == SAMPLE_NO_CHANGES_TO_SQL
     )
+
+
+def test_updated_list_to_sql_list_correct():
+    params = (100, "100", 1.2, "hello world", "this is a number", -1111)
+    expected = "100, '100', 1.2, 'hello world', 'this is a number', -1111"
+    actual = NeilPool._updated_list_to_sql_list(params=params)
+    assert actual == expected

@@ -85,11 +85,22 @@ class NeilPool:
         )
         return sql_script
 
+    @staticmethod
+    def _updated_list_to_sql_list(params: Sequence[Any]) -> str:
+        out = ""
+        for item in params:
+            if isinstance(item, str):
+                out += f"'{item}', "
+            else:
+                out += f"{item}, "
+        return out.rstrip(", ")
+
     def execute_stored_proc(
         self, proc_name: str, params: Sequence[Any] = ()
     ) -> NeilResult:
-        params_str = ",".join([str(x) for x in params])
-        sql_to_run = f"CALL {proc_name}({params_str})"
+        sql_to_run = (
+            f"CALL {proc_name}({NeilPool._updated_list_to_sql_list(params=params)})"
+        )
         result = NeilResult(sqlStatement=sql_to_run, updatedRows=0)
         if self.pool is None:
             self.log.critical("Connection to pool is none, exiting")
