@@ -97,7 +97,7 @@ class NeilPool:
         try:
             with self.pool.get_connection() as conn:
                 with conn.cursor(**as_dict(self.cursor_conf)) as cur:
-                    cur.callproc("proc_name", params)
+                    cur.callproc(proc_name, params)
                     if cur.description is not None and cur.sp_outparams:
                         result.returnedData = cur.fetchall()
                         result.updatedRows = cur.rowcount()
