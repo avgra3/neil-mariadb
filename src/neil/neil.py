@@ -1,3 +1,4 @@
+from typing import Sequence
 from neil.data import (
     NeilResult,
     NeilConfig,
@@ -83,6 +84,50 @@ class NeilPool:
             string=sql_script, bounds=multiline_comment
         )
         return sql_script
+
+    def execute_stored_proc(
+        self, proc_name: str, params: Sequence[Any] = ()
+    ) -> NeilResult:
+        result = NeilResult(
+            sqlStatement=f"CALL {proc_name}({','.join(params)})", updatedRows=0
+        )
+        if self.pool is None:
+            self.log.critical("Connection to pool is none, exiting")
+            return result
+        try:
+            with self.pool.get_connection() as conn:
+                with conn.cursor(**as_dict(self.cursor_conf)) as cur:
+                    cur.callproc("proc_name", params)
+                    if cur.description is not None and cur.sp_outparams:
+                        result.returnedData = cur.fetchall()
+                        result.updatedRows = cur.rowcount()
+                        self.log.info(f"Inserted/Modified rows: {result.updatedRows:,}")
+                    else:
+                        result.updatedRows = cur.rowcount
+                        self.log.info(f"Updated rows: {result.updatedRows:, }")
+                    if cur.warnings > 0:
+                        result.warningCount = cur.warnings
+                        result.warnings = [NeilError(*w) for w in conn.show_warnings()]
+                        for warn in result.warnings:
+                            self.log.warning(warn)
+                    if cur.metadata:
+                        result.metadata = NeilResultMetaData(**cur.metadata)
+                    else:
+                        result.metadata = None
+                conn.close()
+        except mariadb.ProgrammingError as e:
+            self.log.error(f"Mariadb programming error: {e}")
+            result.errors.append(e)
+        except mariadb.Error as e:
+            self.log.error(f"Mariadb error: {e}")
+            result.errors.append(e)
+        except mariadb.PoolError as e:
+            self.log.error(f"Pool error: {e}")
+            result.errors.append(e)
+        except Exception as e:
+            self.log.error(f"An unknown error occured: {e}")
+            result.errors.append(NeilError(ErrorMessage=repr(e)))
+        return result
 
     def execute_script(
         self,
