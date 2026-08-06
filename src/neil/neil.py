@@ -88,8 +88,10 @@ class NeilPool:
     def execute_stored_proc(
         self, proc_name: str, params: Sequence[Any] = ()
     ) -> NeilResult:
+        params_str = ','.join([str(x) for x in params])
+        sql_to_run = f"CALL {proc_name}({params_str})"
         result = NeilResult(
-            sqlStatement=f"CALL {proc_name}({','.join([str(x) for x in params])})", updatedRows=0
+            sqlStatement=sql_to_run, updatedRows=0
         )
         if self.pool is None:
             self.log.critical("Connection to pool is none, exiting")
@@ -101,7 +103,7 @@ class NeilPool:
                     if cur.description is not None and cur.sp_outparams:
                         result.returnedData = cur.fetchall()
                         result.updatedRows = cur.rowcount()
-                        self.log.info(f"Inserted/Modified rows: {result.updatedRows:,}")
+                        self.log.info(f"Inserted/Modified rows: {result.updatedRows:, }")
                     else:
                         result.updatedRows = cur.rowcount
                         self.log.info(f"Updated rows: {result.updatedRows:, }")
