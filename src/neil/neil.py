@@ -89,7 +89,7 @@ class NeilPool:
         self, proc_name: str, params: Sequence[Any] = ()
     ) -> NeilResult:
         result = NeilResult(
-            sqlStatement=f"CALL {proc_name}({','.join(params)})", updatedRows=0
+            sqlStatement=f"CALL {proc_name}({','.join([str(x) for x in params])})", updatedRows=0
         )
         if self.pool is None:
             self.log.critical("Connection to pool is none, exiting")
