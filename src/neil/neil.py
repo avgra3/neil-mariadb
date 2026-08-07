@@ -112,10 +112,10 @@ class NeilPool:
                     if cur.description is not None and cur.sp_outparams:
                         result.returnedData = cur.fetchall()
                         result.updatedRows = cur.rowcount()
-                        self.log.info(f"Inserted/Modified rows: {result.updatedRows}")
+                        self.log.info(f"Inserted/Modified rows: {result.updatedRows:,}")
                     else:
                         result.updatedRows = cur.rowcount
-                        self.log.info(f"Updated rows: {result.updatedRows}")
+                        self.log.info(f"Updated rows: {result.updatedRows:,}")
                     if cur.warnings > 0:
                         result.warningCount = cur.warnings
                         result.warnings = [NeilError(*w) for w in conn.show_warnings()]
