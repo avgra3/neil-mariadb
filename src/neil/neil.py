@@ -363,8 +363,6 @@ class Neil:
                         result.metadata = NeilResultMetaData(**cur.metadata)
                     else:
                         result.metadata = None
-                    cur.close()
-                conn.close()
         except mariadb.ProgrammingError as e:
             self.log.error(f"Mariadb programming error: {e}")
             result.errors.append(e)
