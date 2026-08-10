@@ -6,9 +6,10 @@ from .data import (
     NeilResultMetaData,
     as_dict,
 )
-from .neil import NeilPool
+from .neil import NeilPool, Neil
 
 __all__ = [
+    "Neil",
     "NeilPool",
     "NeilError",
     "NeilResult",
