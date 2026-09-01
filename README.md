@@ -7,6 +7,24 @@ A simple tool to handle MariaDB queries and reduce friction when interacting wit
 1. This project is in its early stages and likely has bugs or issues.
 2. This relies on the Python MariaDB connector version less than 2.0, thus does not have any asynchronous features.
 
+## Prerequisites
+
+You will need the [MariaDB Connector C][mariadb-connector-c] library in order to use this library. Please use the install guide for your machines.
+
+## Installing
+
+To quickly install to your machine using UV, use the following command.
+
+```bash
+uv add git+https://github.com/avgra3/neil-mariadb.git@main
+```
+
+If you are using Pip, use the command below.
+
+```bash
+pip install --upgrade  git+https://github.com/avgra3/neil-mariadb.git@main
+```
+
 ## Features
 ### SQL Cleaning
 Before running any SQL, all commented lines are removed in order to prevent accidental running of invalid SQL.
@@ -35,3 +53,4 @@ The image for Neil comes from this [article][neil-the-seal-attr] from the New Yo
 [Neil the Seal wiki]: https://en.wikipedia.org/wiki/Neil_the_Seal
 [Neil the Seal image]: ./static/neil-the-seal.png
 [neil-the-seal-attr]: https://www.nytimes.com/2026/07/10/world/australia/neil-seal-australia-tasmania.html?smid=url-share
+[mariadb-connector-c]: https://mariadb.com/docs/connectors/mariadb-connector-c/install-mariadb-connector-c
