@@ -43,6 +43,10 @@ Creates a connection pool to reduce the overhead of creating connections when ru
 
 If you have more than one connection in your pool, you could run many queries concurrently with your `NeilPool` object.
 
+## Documentation
+
+1. [Examples](./docs/examples.md)
+
 ## Name Inspiration
 The name for this project comes from [Neil the Seal][Neil the Seal wiki].
 
