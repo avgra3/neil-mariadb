@@ -5,7 +5,8 @@ VERBOSITY +=
 lint:
 	uv run --dev ruff format
 check: lint
-	uv run --dev ruff check --fix
+	uv run --dev ruff check --select I --fix
+	uv run --dev ruff format
 type: check
 	uv run --dev ty check
 test: type

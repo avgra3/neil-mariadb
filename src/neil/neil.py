@@ -1,19 +1,21 @@
+import logging
+from collections.abc import Callable
+from datetime import datetime
+from typing import Any, Sequence
+
 import mariadb
-from typing import Sequence
+
 from neil.data import (
-    NeilResult,
     NeilConfig,
-    NeilError,
     NeilCursorConfig,
+    NeilError,
+    NeilResult,
     NeilResultMetaData,
     as_dict,
 )
 from neil.defaults import LOGGER
+
 from .utils import remove_after_characters, remove_between_characters
-from datetime import datetime
-import logging
-from collections.abc import Callable
-from typing import Any
 
 
 class NeilPool:
@@ -55,15 +57,15 @@ class NeilPool:
             )
             return pool
         except mariadb.ProgrammingError as e:
-            self.log.critical(
+            self.log.exception(
                 f"An error occured while trying to make a connection pool: {e}"
             )
         except mariadb.Error as e:
-            self.log.critical(
+            self.log.exception(
                 f"An error occured while trying to make a connection pool: {e}"
             )
         except Exception as e:
-            self.log.critical(
+            self.log.exception(
                 f"An error occured while trying to make a connection pool: {e}"
             )
 
@@ -78,7 +80,9 @@ class NeilPool:
         multiline_comment: tuple[str, str] = ("/*", "*/"),
     ) -> str:
         # Removing inline comments
-        sql_script = remove_after_characters(chars=sql_script, to_remove=line_comment)
+        sql_script = remove_after_characters(
+            chars=sql_script, to_remove=line_comment
+        )
         # Removing multiline comments
         sql_script = remove_between_characters(
             string=sql_script, bounds=multiline_comment
@@ -98,9 +102,7 @@ class NeilPool:
     def execute_stored_proc(
         self, proc_name: str, params: Sequence[Any] = ()
     ) -> NeilResult:
-        sql_to_run = (
-            f"CALL {proc_name}({NeilPool._updated_list_to_sql_list(params=params)})"
-        )
+        sql_to_run = f"CALL {proc_name}({NeilPool._updated_list_to_sql_list(params=params)})"
         result = NeilResult(sqlStatement=sql_to_run, updatedRows=0)
         if self.pool is None:
             self.log.critical("Connection to pool is none, exiting")
@@ -112,13 +114,17 @@ class NeilPool:
                     if cur.description is not None and cur.sp_outparams:
                         result.returnedData = cur.fetchall()
                         result.updatedRows = cur.rowcount()
-                        self.log.info(f"Inserted/Modified rows: {result.updatedRows:,}")
+                        self.log.info(
+                            f"Inserted/Modified rows: {result.updatedRows:,}"
+                        )
                     else:
                         result.updatedRows = cur.rowcount
                         self.log.info(f"Updated rows: {result.updatedRows:,}")
                     if cur.warnings > 0:
                         result.warningCount = cur.warnings
-                        result.warnings = [NeilError(*w) for w in conn.show_warnings()]
+                        result.warnings = [
+                            NeilError(*w) for w in conn.show_warnings()
+                        ]
                         for warn in result.warnings:
                             self.log.warning(warn)
                     if cur.metadata:
@@ -127,13 +133,13 @@ class NeilPool:
                         result.metadata = None
                 conn.close()
         except mariadb.ProgrammingError as e:
-            self.log.error(f"Mariadb programming error: {e}")
+            self.log.exception(f"Mariadb programming error: {e}")
             result.errors.append(e)
         except mariadb.Error as e:
-            self.log.error(f"Mariadb error: {e}")
+            self.log.exception(f"Mariadb error: {e}")
             result.errors.append(e)
         except mariadb.PoolError as e:
-            self.log.error(f"Pool error: {e}")
+            self.log.exception(f"Pool error: {e}")
             result.errors.append(e)
         except Exception as e:
             self.log.error(f"An unknown error occured: {e}")
@@ -164,10 +170,12 @@ class NeilPool:
                 if query.strip() != "":
                     results.append(self.execute_sql(sql=query, params=params))
         except Exception as e:
-            self.log.critical(f"Fatal error found! {e}")
+            self.log.exception(f"Fatal error found! {e}")
         return results
 
-    def execute_sql(self, sql: str, params: list[Any] | None = None) -> NeilResult:
+    def execute_sql(
+        self, sql: str, params: list[Any] | None = None
+    ) -> NeilResult:
         """
         This assumes that the sql query has been cleaned
         and we can get a connection from the connection pool
@@ -179,21 +187,29 @@ class NeilPool:
         try:
             with self.pool.get_connection() as conn:
                 with conn.cursor(**as_dict(self.cursor_conf)) as cur:
-                    _params = params if params is not None and "?" in sql else ()
+                    _params = (
+                        params if params is not None and "?" in sql else ()
+                    )
                     self.log.info(f"Executing sql:\n{sql.strip()}")
                     if _params is not None and len(_params) > 0:
-                        self.log.info(f"With the following parameters: {_params}")
+                        self.log.info(
+                            f"With the following parameters: {_params}"
+                        )
                     cur.execute(statement=sql.strip(), data=_params)
                     if cur.description is not None:
                         result.returnedData = cur.fetchall()
                         result.updatedRows = cur.rowcount
-                        self.log.info(f"Inserted/Modified rows: {result.updatedRows:,}")
+                        self.log.info(
+                            f"Inserted/Modified rows: {result.updatedRows:,}"
+                        )
                     else:
                         result.updatedRows = cur.rowcount
                         self.log.info(f"Updated rows: {result.updatedRows:,}")
                     if cur.warnings > 0:
                         result.warningCount = cur.warnings
-                        result.warnings = [NeilError(*w) for w in conn.show_warnings()]
+                        result.warnings = [
+                            NeilError(*w) for w in conn.show_warnings()
+                        ]
                         for warn in result.warnings:
                             self.log.warning(warn)
                     if cur.metadata:
@@ -202,16 +218,16 @@ class NeilPool:
                         result.metadata = None
                 conn.close()
         except mariadb.ProgrammingError as e:
-            self.log.error(f"Mariadb programming error: {e}")
+            self.log.exception(f"Mariadb programming error: {e}")
             result.errors.append(e)
         except mariadb.Error as e:
-            self.log.error(f"Mariadb error: {e}")
+            self.log.exception(f"Mariadb error: {e}")
             result.errors.append(e)
         except mariadb.PoolError as e:
-            self.log.error(f"Pool error: {e}")
+            self.log.exception(f"Pool error: {e}")
             result.errors.append(e)
         except Exception as e:
-            self.log.error(f"An unknown error occured: {e}")
+            self.log.exception(f"An unknown error occured: {e}")
             result.errors.append(NeilError(ErrorMessage=repr(e)))
         return result
 
@@ -246,7 +262,9 @@ class Neil:
         multiline_comment: tuple[str, str] = ("/*", "*/"),
     ) -> str:
         # Removing inline comments
-        sql_script = remove_after_characters(chars=sql_script, to_remove=line_comment)
+        sql_script = remove_after_characters(
+            chars=sql_script, to_remove=line_comment
+        )
         # Removing multiline comments
         sql_script = remove_between_characters(
             string=sql_script, bounds=multiline_comment
@@ -266,9 +284,7 @@ class Neil:
     def execute_stored_proc(
         self, proc_name: str, params: Sequence[Any] = ()
     ) -> NeilResult:
-        sql_to_run = (
-            f"CALL {proc_name}({NeilPool._updated_list_to_sql_list(params=params)})"
-        )
+        sql_to_run = f"CALL {proc_name}({NeilPool._updated_list_to_sql_list(params=params)})"
         result = NeilResult(sqlStatement=sql_to_run, updatedRows=0)
         try:
             with mariadb.connect(**self.dbCons) as conn:
@@ -293,16 +309,16 @@ class Neil:
             cur.close()
             conn.close()
         except mariadb.ProgrammingError as e:
-            self.log.error(f"Mariadb programming error: {e}")
+            self.log.exception(f"Mariadb programming error: {e}")
             result.errors.append(e)
         except mariadb.Error as e:
-            self.log.error(f"Mariadb error: {e}")
+            self.log.exception(f"Mariadb error: {e}")
             result.errors.append(e)
         except mariadb.PoolError as e:
-            self.log.error(f"Pool error: {e}")
+            self.log.exception(f"Pool error: {e}")
             result.errors.append(e)
         except Exception as e:
-            self.log.error(f"An unknown error occured: {e}")
+            self.log.exception(f"An unknown error occured: {e}")
             result.errors.append(NeilError(ErrorMessage=repr(e)))
         return result
 
@@ -330,7 +346,7 @@ class Neil:
                 if query.strip() != "":
                     results.append(self.execute_sql(sql=query, params=params))
         except Exception as e:
-            self.log.critical(f"Fatal error found! {e}")
+            self.log.exception(f"Fatal error found! {e}")
         return results
 
     def execute_sql(self, sql: str, params: Sequence[Any] = ()) -> NeilResult:
@@ -342,21 +358,29 @@ class Neil:
         try:
             with mariadb.connect(**self.dbCons) as conn:
                 with conn.cursor(**as_dict(self.cursor_conf)) as cur:
-                    _params = params if params is not None and "?" in sql else ()
+                    _params = (
+                        params if params is not None and "?" in sql else ()
+                    )
                     self.log.info(f"Executing sql:\n{sql.strip()}")
                     if _params is not None and len(_params) > 0:
-                        self.log.info(f"With the following parameters: {_params}")
+                        self.log.info(
+                            f"With the following parameters: {_params}"
+                        )
                     cur.execute(statement=sql.strip(), data=_params)
                     if cur.description is not None:
                         result.returnedData = cur.fetchall()
                         result.updatedRows = cur.rowcount
-                        self.log.info(f"Inserted/Modified rows: {result.updatedRows:,}")
+                        self.log.info(
+                            f"Inserted/Modified rows: {result.updatedRows:,}"
+                        )
                     else:
                         result.updatedRows = cur.rowcount
                         self.log.info(f"Updated rows: {result.updatedRows:,}")
                     if cur.warnings > 0:
                         result.warningCount = cur.warnings
-                        result.warnings = [NeilError(*w) for w in conn.show_warnings()]
+                        result.warnings = [
+                            NeilError(*w) for w in conn.show_warnings()
+                        ]
                         for warn in result.warnings:
                             self.log.warning(warn)
                     if cur.metadata:
@@ -364,15 +388,15 @@ class Neil:
                     else:
                         result.metadata = None
         except mariadb.ProgrammingError as e:
-            self.log.error(f"Mariadb programming error: {e}")
+            self.log.exception(f"Mariadb programming error: {e}")
             result.errors.append(e)
         except mariadb.Error as e:
-            self.log.error(f"Mariadb error: {e}")
+            self.log.exception(f"Mariadb error: {e}")
             result.errors.append(e)
         except mariadb.PoolError as e:
-            self.log.error(f"Pool error: {e}")
+            self.log.exception(f"Pool error: {e}")
             result.errors.append(e)
         except Exception as e:
-            self.log.error(f"An unknown error occured: {e}")
+            self.log.exception(f"An unknown error occured: {e}")
             result.errors.append(NeilError(ErrorMessage=repr(e)))
         return result

@@ -1,5 +1,6 @@
-from dataclasses import dataclass, field as field_, asdict
 from collections.abc import Callable
+from dataclasses import asdict, dataclass
+from dataclasses import field as field_
 from typing import Any
 
 
@@ -87,7 +88,9 @@ class NeilConfig:
     local_infile: bool = False
     init_command: str | None = None
     # Type Conversion Parameters
-    converter: dict[str, Callable[..., Any]] | None = field_(default_factory=dict)
+    converter: dict[str, Callable[..., Any]] | None = field_(
+        default_factory=dict
+    )
 
 
 def as_dict(obj) -> dict:

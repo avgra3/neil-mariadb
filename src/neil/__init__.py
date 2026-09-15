@@ -1,12 +1,12 @@
 from .data import (
-    NeilError,
-    NeilResult,
     NeilConfig,
     NeilCursorConfig,
+    NeilError,
+    NeilResult,
     NeilResultMetaData,
     as_dict,
 )
-from .neil import NeilPool, Neil
+from .neil import Neil, NeilPool
 
 __all__ = [
     "Neil",
