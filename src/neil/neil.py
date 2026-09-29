@@ -79,13 +79,13 @@ class NeilPool:
         line_comment: str = "-- ",
         multiline_comment: tuple[str, str] = ("/*", "*/"),
     ) -> str:
-        # Removing inline comments
-        sql_script = remove_after_characters(
-            chars=sql_script, to_remove=line_comment
-        )
         # Removing multiline comments
         sql_script = remove_between_characters(
             string=sql_script, bounds=multiline_comment
+        )
+        # Removing inline comments
+        sql_script = remove_after_characters(
+            chars=sql_script, to_remove=line_comment
         )
         return sql_script
 

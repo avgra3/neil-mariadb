@@ -1,7 +1,7 @@
 from neil import NeilPool, as_dict
-
-from .constants import (
+from tests.constants import (
     BASIC_CONFIG,
+    MULTILINE_MULTICOMMENT,
     SAMPLE_MULTIPLE_SQL,
     SAMPLE_NO_CHANGES_TO_SQL,
     SAMPLE_SQL_ONE,
@@ -55,3 +55,14 @@ def test_updated_list_to_sql_list_correct():
     expected = "100, '100', 1.2, 'hello world', 'this is a number', -1111"
     actual = NeilPool._updated_list_to_sql_list(params=params)
     assert actual == expected
+
+
+def test_multiline_multi_comment_correct():
+    assert (
+        NeilPool._remove_comments(
+            sql_script=MULTILINE_MULTICOMMENT,
+            line_comment="-- ",
+            multiline_comment=("/* ", " */"),
+        )
+        == ""
+    )

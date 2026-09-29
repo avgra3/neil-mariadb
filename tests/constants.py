@@ -29,3 +29,7 @@ FROM person_table;
 
 
 SAMPLE_NO_CHANGES_TO_SQL = 'SELECT "--this should exist at end" AS temp'
+
+MULTILINE_MULTICOMMENT = """/* -----------------------------------------------
+should not appear
+----------------------------------------------- */"""
