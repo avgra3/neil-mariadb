@@ -2,6 +2,8 @@ from neil import NeilPool, as_dict
 from tests.constants import (
     BASIC_CONFIG,
     MULTILINE_MULTICOMMENT,
+    MULTIPLE_MULTICOMMENT,
+    MULTIPLE_ONELINERS,
     SAMPLE_MULTIPLE_SQL,
     SAMPLE_NO_CHANGES_TO_SQL,
     SAMPLE_SQL_ONE,
@@ -64,5 +66,27 @@ def test_multiline_multi_comment_correct():
             line_comment="-- ",
             multiline_comment=("/* ", " */"),
         )
+        == ""
+    )
+
+
+def test_multiple_multi_comment_correct():
+    assert (
+        NeilPool._remove_comments(
+            sql_script=MULTIPLE_MULTICOMMENT,
+            line_comment="-- ",
+            multiline_comment=("/* ", " */"),
+        )
+        == ""
+    )
+
+
+def test_multiple_oneline_comment_correct():
+    assert (
+        NeilPool._remove_comments(
+            sql_script=MULTIPLE_ONELINERS,
+            line_comment="-- ",
+            multiline_comment=("/* ", " */"),
+        ).strip()
         == ""
     )

@@ -33,3 +33,12 @@ SAMPLE_NO_CHANGES_TO_SQL = 'SELECT "--this should exist at end" AS temp'
 MULTILINE_MULTICOMMENT = """/* -----------------------------------------------
 should not appear
 ----------------------------------------------- */"""
+
+MULTIPLE_MULTICOMMENT = """/* -----------------------------------------------
+should not appear
+----------------------------------------------- *//* -----------------------------------------------
+should not appear
+----------------------------------------------- */"""
+
+MULTIPLE_ONELINERS = """-- bad line
+-- also bad"""
