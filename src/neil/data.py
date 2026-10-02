@@ -37,12 +37,19 @@ class NeilError:
 
     def __str__(self) -> str:
         out = ""
-        if self.SQLState:
-            out = f"SQL State: {self.SQLState}\n" + out
-        if self.ErrorNum:
-            out = f"Error Num: {self.ErrorNum}\n" + out
+        if self.SQLState is not None:
+            out += f"{self.SQLState} "
+        if self.ErrorNum is not None:
+            out += f"({self.ErrorNum}): "
         out += self.ErrorMessage
-        return out
+        return out.strip()
+
+
+def make_error_messages(errs: list) -> list[NeilError]:
+    return [
+        NeilError(ErrorMessage=message, ErrorNum=code, SQLState=level)
+        for level, code, message in errs
+    ]
 
 
 @dataclass(slots=True)

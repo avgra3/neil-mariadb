@@ -12,6 +12,7 @@ from neil.data import (
     NeilResult,
     NeilResultMetaData,
     as_dict,
+    make_error_messages,
 )
 from neil.defaults import LOGGER
 
@@ -122,9 +123,9 @@ class NeilPool:
                         self.log.info(f"Updated rows: {result.updatedRows:,}")
                     if cur.warnings > 0:
                         result.warningCount = cur.warnings
-                        result.warnings = [
-                            NeilError(*w) for w in conn.show_warnings()
-                        ]
+                        result.warnings = make_error_messages(
+                            errs=conn.show_warnings()
+                        )
                         for warn in result.warnings:
                             self.log.warning(warn)
                     if cur.metadata:
@@ -207,9 +208,9 @@ class NeilPool:
                         self.log.info(f"Updated rows: {result.updatedRows:,}")
                     if cur.warnings > 0:
                         result.warningCount = cur.warnings
-                        result.warnings = [
-                            NeilError(*w) for w in conn.show_warnings()
-                        ]
+                        result.warnings = make_error_messages(
+                            errs=conn.show_warnings()
+                        )
                         for warn in result.warnings:
                             self.log.warning(warn)
                     if cur.metadata:
@@ -299,7 +300,7 @@ class Neil:
                 self.log.info(f"Updated rows: {result.updatedRows:,}")
             if cur.warnings > 0:
                 result.warningCount = cur.warnings
-                result.warnings = [NeilError(*w) for w in conn.show_warnings()]
+                result.warnings = make_error_messages(errs=conn.show_warnings())
                 for warn in result.warnings:
                     self.log.warning(warn)
             if cur.metadata:
@@ -378,9 +379,9 @@ class Neil:
                         self.log.info(f"Updated rows: {result.updatedRows:,}")
                     if cur.warnings > 0:
                         result.warningCount = cur.warnings
-                        result.warnings = [
-                            NeilError(*w) for w in conn.show_warnings()
-                        ]
+                        result.warnings = make_error_messages(
+                            errs=conn.show_warnings()
+                        )
                         for warn in result.warnings:
                             self.log.warning(warn)
                     if cur.metadata:
@@ -388,15 +389,15 @@ class Neil:
                     else:
                         result.metadata = None
         except mariadb.ProgrammingError as e:
-            self.log.exception(f"Mariadb programming error: {e}")
+            self.log.exception(f"Mariadb programming error => {e}")
             result.errors.append(e)
         except mariadb.Error as e:
-            self.log.exception(f"Mariadb error: {e}")
+            self.log.exception(f"Mariadb error => {e}")
             result.errors.append(e)
         except mariadb.PoolError as e:
-            self.log.exception(f"Pool error: {e}")
+            self.log.exception(f"Pool error => {e}")
             result.errors.append(e)
         except Exception as e:
-            self.log.exception(f"An unknown error occured: {e}")
+            self.log.exception(f"An unknown error occured => {e}")
             result.errors.append(NeilError(ErrorMessage=repr(e)))
         return result
