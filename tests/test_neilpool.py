@@ -90,3 +90,14 @@ def test_multiple_oneline_comment_correct():
         ).strip()
         == ""
     )
+
+
+def test_weird_comments():
+    input: str = """/*-----------------------------------------------
+03_diag
+-----------------------------------------------*/"""
+    expected: str = ""
+    actual = NeilPool._remove_comments(
+        sql_script=expected,
+    )
+    assert actual == expected

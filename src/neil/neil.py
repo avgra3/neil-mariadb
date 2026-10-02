@@ -190,7 +190,7 @@ class NeilPool:
                     _params = (
                         params if params is not None and "?" in sql else ()
                     )
-                    self.log.info(f"Executing sql:\n{sql.strip()}")
+                    self.log.info(f"Executing sql => {sql.strip()}")
                     if _params is not None and len(_params) > 0:
                         self.log.info(
                             f"With the following parameters: {_params}"
@@ -361,7 +361,7 @@ class Neil:
                     _params = (
                         params if params is not None and "?" in sql else ()
                     )
-                    self.log.info(f"Executing sql:\n{sql.strip()}")
+                    self.log.info(f"Executing sql => {sql.strip()}")
                     if _params is not None and len(_params) > 0:
                         self.log.info(
                             f"With the following parameters: {_params}"
