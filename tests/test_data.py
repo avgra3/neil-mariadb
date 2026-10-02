@@ -1,6 +1,5 @@
 from neil.data import NeilResult, NeilResultMetaData, as_dict
-
-from .constants import BASIC_CONFIG
+from tests.constants import BASIC_CONFIG
 
 
 def test_NeilConfig_dictionary():
@@ -35,3 +34,19 @@ def test_NeilResult_to_str():
     )
     actual = str(result)
     assert expected == actual
+
+
+def test_NeilResult_output_method():
+    metadata = NeilResultMetaData(field=("field_name",))
+    result = NeilResult(
+        sqlStatement="SELECT 1 AS field_name",
+        returnedData=[(1,)],
+        updatedRows=1,
+        metadata=metadata,
+    )
+    expected_metadata = "|field_name|\n|1|\n" + str(metadata) + "\n"
+    expected_no_metadata = "|field_name|\n|1|\n"
+    # Want metadata
+    assert result.output_result(verbose=True) == expected_metadata
+    # do not want metadata
+    assert result.output_result(verbose=False) == expected_no_metadata

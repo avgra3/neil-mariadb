@@ -81,6 +81,24 @@ class NeilResult:
                 out += str(err) + "\n"
         return out
 
+    def output_result(self, verbose: bool = False) -> str:
+        out = ""
+        if self.metadata:
+            out += f"|{' | '.join(self.metadata.field)}|\n"
+        if self.returnedData and len(self.returnedData) > 0:
+            for data in self.returnedData:
+                out += f"|{' | '.join([str(d) for d in data])}|\n"
+        if self.metadata and verbose:
+            out += str(self.metadata) + "\n"
+        if self.warningCount > 0:
+            out += f"warnings: {self.warningCount}\n"
+            for warning in self.warnings:
+                out += str(warning) + "\n"
+        if len(self.errors) > 0:
+            for err in self.errors:
+                out += str(err) + "\n"
+        return out
+
 
 @dataclass(slots=True)
 class NeilConfig:
