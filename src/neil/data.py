@@ -97,7 +97,7 @@ class NeilResult:
         if len(self.errors) > 0:
             for err in self.errors:
                 out += str(err) + "\n"
-        return out
+        return out.strip()
 
 
 @dataclass(slots=True)

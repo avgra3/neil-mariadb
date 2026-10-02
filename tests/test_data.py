@@ -44,8 +44,8 @@ def test_NeilResult_output_method():
         updatedRows=1,
         metadata=metadata,
     )
-    expected_metadata = "|field_name|\n|1|\n" + str(metadata) + "\n"
-    expected_no_metadata = "|field_name|\n|1|\n"
+    expected_metadata = "|field_name|\n|1|\n" + str(metadata)
+    expected_no_metadata = "|field_name|\n|1|"
     # Want metadata
     assert result.output_result(verbose=True) == expected_metadata
     # do not want metadata
