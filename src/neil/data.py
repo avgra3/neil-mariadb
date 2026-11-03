@@ -24,9 +24,10 @@ class NeilResultMetaData:
 @dataclass(slots=True)
 class NeilCursorConfig:
     buffered: bool = True
+    prepared: bool = False
 
     def __str__(self) -> str:
-        return f"buffered={self.buffered}"
+        return f"buffered={self.buffered}, prepared={self.prepared}"
 
 
 @dataclass(slots=True, repr=True)
