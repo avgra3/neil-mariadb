@@ -25,6 +25,14 @@ If you are using Pip, use the command below.
 pip install --upgrade  git+https://github.com/avgra3/neil-mariadb.git@main
 ```
 
+### Installing Specific Releases
+
+```bash
+uv add git+https://github.com/avgra3/neil-mariadb.git@main
+
+uv add git+https://github.com/avgra3/neil-mariadb.git@v0.5.1
+```
+
 ## Features
 ### SQL Cleaning
 Before running any SQL, all commented lines are removed in order to prevent accidental running of invalid SQL.
