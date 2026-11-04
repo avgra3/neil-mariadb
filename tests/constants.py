@@ -10,22 +10,19 @@ SAMPLE_MULTIPLE_SQL = SAMPLE_SQL_ONE + SAMPLE_SQL_TWO
 
 SAMPLE_SQL_WITH_LINE_COMMENTS = """SELECT person
 -- This should not appear in the output
-FROM person_table;
-"""
+FROM person_table;"""
+
 SAMPLE_SQL_WITH_MULTILINE_COMMENTS = """SELECT person
 /*
 This should not appear in the output
 */
-FROM person_table;
-"""
+FROM person_table;"""
+
 SAMPLE_SQL_WITHOUT_LINE_COMMENTS = """SELECT person
+FROM person_table;"""
 
-FROM person_table;
-"""
 SAMPLE_SQL_WITHOUT_MULTILINE_COMMENTS = """SELECT person
-
-FROM person_table;
-"""
+FROM person_table;"""
 
 
 SAMPLE_NO_CHANGES_TO_SQL = 'SELECT "--this should exist at end" AS temp'

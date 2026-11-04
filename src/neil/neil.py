@@ -88,7 +88,7 @@ class NeilPool:
         sql_script = remove_after_characters(
             chars=sql_script, to_remove=line_comment
         )
-        return sql_script
+        return sql_script.strip()
 
     @staticmethod
     def _updated_list_to_sql_list(params: Sequence[Any]) -> str:
